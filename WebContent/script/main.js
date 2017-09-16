@@ -104,6 +104,12 @@
 		category.innerHTML = 'Category: ' + item.categories.join(', ');
 		section.appendChild(category);
 
+		var date = $('p', {
+			className : 'item-date'
+		});
+		date.innerHTML = 'Date: ' + item.date;
+		section.appendChild(date);
+		
 		var stars = $('div', {
 			className : 'stars'
 		});
@@ -130,8 +136,7 @@
 			className : 'item-address'
 		});
 
-		address.innerHTML = item.address.replace(/,/g, '<br/>').replace(/\"/g,
-				'');
+		address.innerHTML = item.address.replace(/,/g, '<br/>').replace(/\"/g,'') + ', ' + item.zipcode;;
 		li.appendChild(address);
 
 		// favorite link
@@ -356,7 +361,7 @@
 		$('nearby-btn').addEventListener('click', loadNearbyItems);
 		$('fav-btn').addEventListener('click', loadFavoriteItems);
 		$('recommend-btn').addEventListener('click', loadRecommendedItems);
-
+		
 		initGeoLocation();
 	}
 	init();

@@ -44,7 +44,17 @@ public class ItemHistory extends HttpServlet {
 		// TODO Auto-generated method stub
 		String userId = request.getParameter("user_id");
 		Set<Item> items = conn.getFavoriteItems(userId);
-		RpcHelper.writeJsonArray(response, RpcHelper.getJsonArray(items));
+		JSONArray array = new JSONArray();
+		for (Item i : items) {
+			JSONObject j = i.toJSONObject();
+			try {
+				j.put("favorite", true);
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+			array.put(j);			
+		}
+		RpcHelper.writeJsonArray(response, array);
 	}
 
 	/**
@@ -65,7 +75,7 @@ public class ItemHistory extends HttpServlet {
 					visitedEvents.add(eventId);
 				}
 				conn.setFavoriteItems(userId, visitedEvents);
-				RpcHelper.writeJsonObject(response, new JSONObject().put("status", "OK"));
+				RpcHelper.writeJsonObject(response, new JSONObject().put("result", "SUCCESS"));
 			} else {
 				RpcHelper.writeJsonObject(response, new JSONObject().put("status", "InvalidParameter"));
 			}
@@ -83,16 +93,16 @@ public class ItemHistory extends HttpServlet {
 		// TODO Auto-generated method stub
 		try {
 			JSONObject input = RpcHelper.readJsonObject(request);
-			if (input.has("user_id") && input.has("unfavorite")) {
+			if (input.has("user_id") && input.has("favorite")) {
 				String userId = (String) input.get("user_id");
-				JSONArray array = (JSONArray) input.get("unfavorite");
+				JSONArray array = (JSONArray) input.get("favorite");
 				List<String> unfavoredEvents = new ArrayList<>();
 				for (int i = 0; i < array.length(); i++) {
 					String eventId = (String) array.get(i);
 					unfavoredEvents.add(eventId);
 				}
 				conn.unsetFavoriteItems(userId, unfavoredEvents);
-				RpcHelper.writeJsonObject(response, new JSONObject().put("Unfavored", input));
+				RpcHelper.writeJsonObject(response, new JSONObject().put("result", "SUCCESS"));
 			} else {
 				RpcHelper.writeJsonObject(response, new JSONObject().put("status", "InvalidParameter"));
 			}

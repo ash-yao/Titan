@@ -48,7 +48,7 @@ public class MySQLTableCreation {
 					+ "zipcode VARCHAR(255), " + "rating FLOAT," + "address VARCHAR(255), " + "latitude FLOAT, "
 					+ " longitude FLOAT, " + "description VARCHAR(255), " + "snippet VARCHAR(255), "
 					+ "snippet_url VARCHAR(255), " + "image_url VARCHAR(255)," + "url VARCHAR(255),"
-					+ " PRIMARY KEY ( item_id ))";
+					+ "date VARCHAR(255), " + " PRIMARY KEY ( item_id ))";
 			stmt.executeUpdate(sql);
 
 			// Student question: why use a combine key here?
@@ -63,6 +63,7 @@ public class MySQLTableCreation {
 			sql = "CREATE TABLE history " + "(history_id bigint(20) unsigned NOT NULL AUTO_INCREMENT, "
 					+ " user_id VARCHAR(255) NOT NULL , " + " item_id VARCHAR(255) NOT NULL, "
 					+ " last_favor_time timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP, " + " PRIMARY KEY (history_id),"
+					+ " UNIQUE KEY mainKey (item_id,user_id),"
 					+ "FOREIGN KEY (item_id) REFERENCES items(item_id),"
 					+ "FOREIGN KEY (user_id) REFERENCES users(user_id))";
 			stmt.executeUpdate(sql);

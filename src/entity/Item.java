@@ -23,6 +23,7 @@ public class Item {
 	private String url;
 	private String snippet;
 	private String snippetUrl;
+	private String date;
 	public String getItemId() {
 		return itemId;
 	}
@@ -71,6 +72,10 @@ public class Item {
 	public String getSnippetUrl() {
 		return snippetUrl;
 	}
+	
+	public String getDate() {
+		return date;
+	}
 	public JSONObject toJSONObject() {
 		JSONObject obj = new JSONObject();
 		try {
@@ -90,6 +95,7 @@ public class Item {
 			obj.put("url", url);
 			obj.put("snippet_url", snippetUrl);
 			obj.put("snippet", snippet);
+			obj.put("date", date);
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
@@ -112,6 +118,7 @@ public class Item {
 		this.url = builder.url;
 		this.snippet = builder.snippet;
 		this.snippetUrl = builder.snippetUrl;
+		this.date = builder.date;
 	}
 
 	public static class ItemBuilder {
@@ -131,7 +138,7 @@ public class Item {
 		private String url;
 		private String snippet;
 		private String snippetUrl;
-
+		private String date;
 		public ItemBuilder setItemId(String itemId) {
 			this.itemId = itemId;
 			return this;
@@ -211,7 +218,10 @@ public class Item {
 			this.snippetUrl = snippetUrl;
 			return this;
 		}
-
+		public ItemBuilder setDate(String date) {
+			this.date = date;
+			return this;
+		}
 		public Item build() {
 			return new Item(this);
 		}

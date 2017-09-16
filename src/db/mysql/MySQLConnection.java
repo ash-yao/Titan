@@ -139,6 +139,7 @@ public class MySQLConnection implements DBConnection {
 					builder.setSnippetUrl(rs.getString("snippet_url"));
 					builder.setImageUrl(rs.getString("image_url"));
 					builder.setUrl(rs.getString("url"));
+					builder.setDate(rs.getString("date"));
 				}
 
 				// Join categories information into builder.
@@ -177,7 +178,7 @@ public class MySQLConnection implements DBConnection {
 		// TODO Auto-generated method stub
 		try {
 			// First, insert into items table
-			String sql = "INSERT IGNORE INTO items VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+			String sql = "INSERT IGNORE INTO items VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 
 			PreparedStatement statement = conn.prepareStatement(sql);
 			statement.setString(1, item.getItemId());
@@ -195,6 +196,7 @@ public class MySQLConnection implements DBConnection {
 			statement.setString(13, item.getSnippetUrl());
 			statement.setString(14, item.getImageUrl());
 			statement.setString(15, item.getUrl());
+			statement.setString(16, item.getDate());
 			statement.execute();
 
 			// Second, update categories table for each category.

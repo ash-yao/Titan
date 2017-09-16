@@ -50,13 +50,13 @@ public class SearchItem extends HttpServlet {
 		double lon = Double.parseDouble(request.getParameter("lon"));
 		// Term can be empty or null.
 		String term = request.getParameter("term");
-		List<Item> items = conn.searchItems(userId,lat, lon, term);
+		List<Item> items = conn.searchItems(userId, lat, lon, term);
 		Set<String> favored = conn.getFavoriteItemIds(userId);
 		JSONArray array = new JSONArray();
 		for (Item i : items) {
 			JSONObject j = i.toJSONObject();
 			try {
-				j.put("favourite", favored.contains(i.getItemId()));
+				j.put("favorite", favored.contains(i.getItemId()));
 			} catch (JSONException e) {
 				e.printStackTrace();
 			}

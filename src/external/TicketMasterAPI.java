@@ -17,7 +17,7 @@ import entity.Item.ItemBuilder;
 public class TicketMasterAPI implements ExternalAPI {
 	private static final String API_HOST = "app.ticketmaster.com";
 	private static final String SEARCH_PATH = "/discovery/v2/events.json";
-	private static final String DEFAULT_TERM = ""; // no restriction
+	private static final String DEFAULT_TERM = "ticket"; // no restriction
 	private static final String API_KEY = "Jnt6QHEgL77JF2GP093dwJapLSSbAhV9";
 
 	/**
@@ -27,11 +27,12 @@ public class TicketMasterAPI implements ExternalAPI {
 	public List<Item> search(double lat, double lon, String term) {
 		String url = "http://" + API_HOST + SEARCH_PATH;
 		String latlong = GeoHash.encodeGeohash(lat, lon, 4);
+		String query;
 		if (term == null) {
 			term = DEFAULT_TERM;
 		}
 		term = urlEncodeHelper(term);
-		String query = String.format("apikey=%s&geopoint=%s&keyword=%s", API_KEY, latlong, term);
+		query = String.format("apikey=%s&geoPoint=%s&keyword=%s", API_KEY, latlong, term);
 		try {
 			HttpURLConnection connection = (HttpURLConnection) new URL(url + "?" + query).openConnection();
 			connection.setRequestMethod("GET");
@@ -47,8 +48,6 @@ public class TicketMasterAPI implements ExternalAPI {
 			in.close();
 			// Extract events array only.
 			JSONObject responseJson = new JSONObject(response.toString());
-			System.out.println("Response Content : " + response.toString());
-			System.out.println();
 			JSONObject embedded = (JSONObject) responseJson.get("_embedded");
 			JSONArray events = (JSONArray) embedded.get("events");
 			return getItemList(events);
@@ -94,6 +93,7 @@ public class TicketMasterAPI implements ExternalAPI {
 			builder.setCategories(getCategories(event));
 			builder.setImageUrl(getImageUrl(event));
 			builder.setUrl(getStringFieldOrNull(event, "url"));
+			builder.setDate(getDate(event));
 			JSONObject venue = getVenue(event);
 			String cityName = "";
 			if (venue != null) {
@@ -152,6 +152,19 @@ public class TicketMasterAPI implements ExternalAPI {
 		return null;
 	}
 
+	private String getDate(JSONObject event) throws JSONException {
+		if (!event.isNull("dates")) {
+			JSONObject dates = event.getJSONObject("dates");
+			if (!dates.isNull("start")) {
+				return getStringFieldOrNull(dates.getJSONObject("start"), "localDate");
+			} else {
+				return null;
+			}
+		} else {
+			return null;
+		}		
+	}
+	
 	private String getImageUrl(JSONObject event) throws JSONException {
 		if (!event.isNull("images")) {
 			JSONArray imagesArray = event.getJSONArray("images");
@@ -177,6 +190,7 @@ public class TicketMasterAPI implements ExternalAPI {
 
 	private Set<String> getCategories(JSONObject event) throws JSONException {
 		Set<String> categories = new HashSet<>();
+		if (event.isNull("classifications")) return categories; 
 		JSONArray classifications = (JSONArray) event.get("classifications");
 		for (int j = 0; j < classifications.length(); j++) {
 			JSONObject classification = classifications.getJSONObject(j);
